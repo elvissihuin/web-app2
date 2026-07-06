@@ -1,0 +1,18 @@
+1. El motor de descarga (yt-dlp)
+Este es el "cerebro" real detrás de las descargas. yt-dlp es una de las librerías de Python más potentes del mundo para extraer videos.
+
+¿Cómo funciona? Cuando le damos un enlace, yt-dlp se conecta a YouTube/TikTok fingiendo ser un navegador web. Extrae la información oculta en el código de la página y encuentra los enlaces directos a los archivos de video MP4 y audio M4A que están escondidos en los servidores de la plataforma.
+El reto de la resolución: YouTube, por ejemplo, no guarda los videos en 1080p o 4K con el audio incluido. Guarda el video mudo por un lado y el audio por otro para ahorrar ancho de banda. Cuando pides un video en 1080p, yt-dlp descarga ambos archivos por separado y luego usa otra herramienta llamada FFmpeg para "coserlos" (unirlos) en un solo archivo .mp4 antes de entregarlo.
+2. El Backend o Servidor Web (app.py)
+Escrito en Flask (un framework de Python). Este es el puente entre la interfaz visual y el motor yt-dlp. Tiene 4 "rutas" o endpoints principales:
+
+GET /: Es lo primero que carga. Toma el archivo index.html y se lo envía a tu navegador para que veas la página.
+POST /api/info: Cuando pegas una URL, esta ruta usa yt-dlp en modo "solo lectura" (sin descargar) para ver si el video existe, leer su título, su imagen en miniatura (thumbnail) y qué resoluciones tiene disponibles.
+POST /api/download: Cuando le das al botón de descargar, esta ruta recibe la orden. Crea un identificador único (Task ID) y manda la tarea a ejecutarse en segundo plano (usando threading). Si no usáramos un hilo en segundo plano, la página web se quedaría "congelada" cargando hasta que terminara de descargar el video de 500MB.
+GET /api/progress/<task_id>: Esta es muy especial. Usa algo llamado SSE (Server-Sent Events). Básicamente, mantiene una tubería abierta entre el servidor y tu navegador, por donde el servidor va gritando los porcentajes: "¡Voy en 10%... 25%... 80%!".
+3. El Frontend o Interfaz (app.js, style.css, index.html)
+Es lo que tú ves y tocas en tu pantalla.
+
+Javascript (app.js): Es el director de orquesta en el navegador. Detecta si lo que pegaste es de TikTok o de YouTube, le avisa al Backend que empiece la descarga, y usa los datos de la tubería (SSE) para hacer que la barra de progreso se mueva suavemente.
+El guardado final: Cuando el servidor le avisa a app.js que el video ya llegó al 100%, el Javascript crea un "click invisible" en un enlace secreto (/api/file/XYZ) que hace que tu navegador comience a guardar el archivo final en tu carpeta de "Descargas" local, ya sea en tu PC o en tu celular.
+En resumen del flujo: Tú pegas un link ➔ JS lo envía a Flask ➔ Flask arranca un hilo con yt-dlp ➔ yt-dlp descarga pedacitos del video y reporta a Flask ➔ Flask le avisa a JS ➔ JS mueve la barra de progreso ➔ yt-dlp une el video ➔ Flask se lo envía de regreso a JS ➔ Tu navegador lo guarda

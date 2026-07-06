@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Media Downloader — Descarga videos de YouTube, TikTok, Facebook y Pinterest</title>
+  <meta name="description" content="Descarga videos de YouTube, TikTok, Facebook y Pinterest en alta calidad. Elige resolución y calidad de audio. Gratis y fácil de usar." />
+  <meta name="theme-color" content="#07070e" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬇</text></svg>" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ═══ Header ═══ -->
+    <header class="header">
+      <span class="header__icon">⬇</span>
+      <h1 class="header__title">Social Media Downloader</h1>
+      <p class="header__subtitle">YouTube · TikTok · Facebook · Pinterest</p>
+    </header>
+
+    <!-- ═══ Platform Selector ═══ -->
+    <section class="card" id="card-platform">
+      <div class="card__label">
+        <span class="card__label-icon">🌐</span>
+        Selecciona la plataforma
+      </div>
+      <div class="platforms">
+        <button class="platform-btn active" data-platform="youtube" type="button">
+          <span class="platform-btn__icon">▶</span>
+          <span class="platform-btn__name">YouTube</span>
+        </button>
+        <button class="platform-btn" data-platform="tiktok" type="button">
+          <span class="platform-btn__icon">♪</span>
+          <span class="platform-btn__name">TikTok</span>
+        </button>
+        <button class="platform-btn" data-platform="facebook" type="button">
+          <span class="platform-btn__icon">f</span>
+          <span class="platform-btn__name">Facebook</span>
+        </button>
+        <button class="platform-btn" data-platform="pinterest" type="button">
+          <span class="platform-btn__icon">P</span>
+          <span class="platform-btn__name">Pinterest</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══ URL Input ═══ -->
+    <section class="card" id="card-url">
+      <div class="card__label">
+        <span class="card__label-icon">🔗</span>
+        URL del video
+      </div>
+      <div class="url-group">
+        <input
+          type="url"
+          id="url-input"
+          class="url-input"
+          placeholder="Pega aquí la URL del video..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="btn-paste" id="btn-paste" type="button">
+          📋 Pegar
+        </button>
+      </div>
+
+      <!-- Video Preview -->
+      <div class="preview" id="preview">
+        <img class="preview__thumb" id="preview-thumb" alt="Thumbnail" />
+        <div class="preview__info">
+          <div class="preview__title" id="preview-title"></div>
+          <div class="preview__meta">
+            <span id="preview-meta"></span>
+            <span class="preview__platform" id="preview-platform" data-platform="youtube"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Download Options ═══ -->
+    <section class="card" id="card-options">
+      <div class="card__label">
+        <span class="card__label-icon">⚙️</span>
+        Opciones de descarga
+      </div>
+      <div class="options-grid">
+        <!-- Resolution -->
+        <div class="option-group" id="resolution-group">
+          <label class="option-group__label" for="resolution-select">
+            🎬 Resolución
+          </label>
+          <select class="option-select" id="resolution-select">
+            <option value="best">✨ Mejor disponible</option>
+            <option value="2160">4K (2160p)</option>
+            <option value="1440">1440p</option>
+            <option value="1080">1080p</option>
+            <option value="720">720p</option>
+            <option value="480">480p</option>
+            <option value="360">360p</option>
+          </select>
+        </div>
+
+        <!-- Audio -->
+        <div class="option-group" id="audio-group">
+          <label class="option-group__label" for="audio-select">
+            🎵 Audio
+          </label>
+          <select class="option-select" id="audio-select">
+            <option value="best">🔊 Máxima calidad</option>
+            <option value="mp3">🎧 Solo audio (MP3 320kbps)</option>
+            <option value="m4a">🎧 Solo audio (M4A)</option>
+          </select>
+        </div>
+
+        <!-- TikTok Notice -->
+        <div class="tiktok-notice" id="tiktok-notice">
+          ℹ️ TikTok se descarga automáticamente en la máxima calidad disponible con el nombre original.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Download Button ═══ -->
+    <section class="card" style="padding: 16px 24px;">
+      <button class="btn-download" id="btn-download" type="button">
+        <span class="btn-download__spinner" id="btn-download-spinner"></span>
+        <span id="btn-download-text">⬇ DESCARGAR VIDEO</span>
+      </button>
+    </section>
+
+    <!-- ═══ Progress ═══ -->
+    <section class="card progress-section" id="progress-section">
+      <div class="card__label">
+        <span class="card__label-icon">📊</span>
+        Progreso
+      </div>
+      <div class="progress-header">
+        <span class="progress-title" id="progress-title">Preparando...</span>
+        <span class="progress-percent" id="progress-percent">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-detail">
+        <span id="progress-speed"></span>
+        <span id="progress-eta"></span>
+      </div>
+    </section>
+
+    <!-- ═══ Status Message ═══ -->
+    <div class="status-message" id="status-message">
+      <span id="status-text"></span>
+    </div>
+
+    <!-- ═══ History ═══ -->
+    <section class="card">
+      <div class="history-header">
+        <div class="card__label" style="margin-bottom: 0;">
+          <span class="card__label-icon">📋</span>
+          Historial de descargas
+        </div>
+        <span class="history-count" id="history-count">0 descargas</span>
+      </div>
+      <div class="history-list" id="history-list">
+        <div class="history-empty">No hay descargas aún. ¡Pega una URL y comienza! 🚀</div>
+      </div>
+    </section>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="footer">
+      <p>Social Media Downloader · Hecho con ❤️ · Powered by yt-dlp</p>
+    </footer>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

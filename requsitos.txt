@@ -1,0 +1,32 @@
+comando de instalación:
+pip install yt-dlp flask customtkinter Pillow pyinstaller
+----------------------------------------------------------
+promt para otra ia 
+
+¡Hola! Necesito tu ayuda para modificar la interfaz gráfica de un proyecto que ya tengo funcional. Antes de pedirte los cambios, aquí tienes el contexto completo de cómo está construido, cómo funciona y qué reglas debes seguir estrictamente para no romper la lógica del sistema.
+
+🛠️ CONTEXTO DEL PROYECTO
+Es un "Social Media Downloader" (Descargador de videos de YouTube, TikTok, Facebook y Pinterest) impulsado por yt-dlp. El proyecto tiene dos versiones (una de escritorio y una web), pero nos enfocaremos en la versión WEB.
+
+Stack Tecnológico:
+
+Backend: Python con Flask (Ruteo, API REST y Server-Sent Events).
+Motor de Descarga: yt-dlp (Se ejecuta en hilos en segundo plano).
+Frontend: HTML5, CSS Vanilla y JavaScript Vanilla (Sin frameworks pesados).
+⚙️ CÓMO FUNCIONA LA ARQUITECTURA WEB
+Obtención de Info (POST /api/info): El usuario pega una URL en el frontend. JS envía la URL al backend. Flask usa yt-dlp (con skip_download=True) para devolver el título, resoluciones disponibles y el thumbnail.
+Descarga (POST /api/download): Al dar click en descargar, Flask recibe la calidad deseada, crea un ID único (task_id) y arranca un hilo en segundo plano (threading) para descargar el video usando yt-dlp en un directorio temporal.
+Progreso en Tiempo Real (GET /api/progress/<task_id>): Se utiliza SSE (Server-Sent Events). yt-dlp tiene un "progress_hook" en Python que actualiza un diccionario global. Flask lee este diccionario y streamea eventos JSON al frontend (progreso %, velocidad, estado).
+Entrega del Archivo (GET /api/file/<task_id>): Cuando el frontend recibe por SSE el status "completed", el JS fuerza la descarga del archivo haciendo que el navegador apunte a esta ruta, entregando el archivo final.
+⚠️ QUÉ NO DEBES MODIFICAR (REGLAS ESTRICTAS)
+Si te pido cambios en la Interfaz (UI/UX), debes respetar estas reglas:
+
+Lógica de SSE (EventSource) en JS: No modifiques ni elimines la función 'listenProgress' ni la forma en que procesa los eventos (event.data). Espera recibir los status: 'downloading', 'processing', 'completed' y 'error'.
+Backend (app.py): No toques la estructura de 'download_tasks' ni el 'progress_hook' de yt-dlp. El frontend depende de esa estructura exacta de JSON para mover la barra de progreso.
+Flujo de Descarga Final: No cambies la función 'triggerFileDownload' en JS. El frontend debe redirigir al endpoint /api/file/ para que el usuario reciba su archivo.
+Nombres de IDs y Data Attributes críticos: Si cambias la estructura HTML, asegúrate de mantener los selectores que usa el app.js (por ejemplo, los IDs del input de URL, los selects de resolución, y los botones de acción) o actualízalos en el JS de manera coherente sin borrar la lógica de los eventos (EventListeners).
+🎨 QUÉ SÍ PUEDES MODIFICAR
+La paleta de colores, CSS variables, tipografías y animaciones (style.css).
+La estructura y disposición del HTML (index.html) para hacerlo ver más moderno, añadir modales, tarjetas nuevas, etc.
+El comportamiento visual en app.js (por ejemplo, cómo se ocultan/muestran las barras de progreso, los mensajes de error o el historial).
+¿Has entendido el contexto y las reglas? Si es así, responde "Sí, estoy listo. ¿Qué cambios visuales quieres hacer?" y esperaré mis instrucciones.

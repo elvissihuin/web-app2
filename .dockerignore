@@ -1,0 +1,27 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.env
+
+# Build files
+build/
+dist/
+*.spec
+
+# VS Code
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# Downloaded files
+temp_downloads/
+*.mp4
+*.mp3
+*.m4a
